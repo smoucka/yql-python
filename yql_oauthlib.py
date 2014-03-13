@@ -7,9 +7,10 @@ with open('auth.csv', 'rb') as f:
 	vals = f_iter.next()
 
 req_token_url = 'https://api.login.yahoo.com/oauth/v2/get_request_token'
+callback = 'oob'
 
-oauth = OAuth1Session(client_key=vals['consumer_key'], client_secret=vals['consumer_secret'])
-fetch_response = oauth.fetch_request_token(req_token_url)
+oauth_session = OAuth1Session(vals['consumer_key'], client_secret=vals['consumer_secret'], callback_uri=callback)
+fetch_response = oauth_session.fetch_request_token(req_token_url)
 
 print fetch_response
 
