@@ -8,7 +8,7 @@
   		
   		var w = 600;
   		var h = 300;
-  		var barPadding = 2;
+  		var barPad = 2;
 
   		// Team stats data set
   		var stats = [
@@ -21,36 +21,40 @@
   			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FT%": 0.79, "Blk": 18.0, "TOs": 95.0, "FG%": 0.46, "Pts": 490.0},
   			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FT%": 0.82, "Blk": 20.0, "TOs": 72.0, "FG%": 0.4, "Pts": 463.0}];
 		
-		//var stat_cat = function(d) { return d.Ast; };
-		
+		  //var stat_cat = "Ast";
+
+      var yScale = d3.scale.linear()
+        .domain([0, d3.max(stats, function(d) { return d.Ast; })])
+        .range([0, h]);
+
   		var svgContainer = d3.select("body").append("svg")
-  											.attr("width", w)
-  											.attr("height", h)
-  											.style("border","1px solid black");
+  			.attr("width", w)
+  			.attr("height", h)
+  			.style("border","1px solid black");
 
   		var bars = svgContainer.selectAll("rect")
-  								.data(stats)
-  								.enter()
-  								.append("rect")
-								.attr({
-									x: function(d, i) { return i * (w / stats.length); },
-									y: function(d) { return h - d.Ast; },
-									height: function(d) { return d.Ast; },
-									width: w / stats.length - barPadding
-									});
+  			.data(stats)
+  			.enter()
+  			.append("rect")
+				.attr({
+					x: function(d, i) { return i * (w / stats.length); },
+					y: function(d) { return h - d.Ast; },
+					height: function(d) { return d.Ast; },
+					width: w / stats.length - barPad
+				});
 									
-		var labels = svgContainer.selectAll("text")
-									.data(stats)
-									.enter()
-									.append("text")
-									.text(function(d) { return d.Ast; })
-									.attr({
-										x: function(d, i) {return i * (w / stats.length) + (w / stats.length - barPadding) / 2;},
-										y: function(d) {return h - d.Ast + 20;},
-										"text-anchor": "middle",
-										"font-family": "sans-serif",
-										fill: "white"
-										});
+		  var labels = svgContainer.selectAll("text")
+				.data(stats)
+				.enter()
+				.append("text")
+				.text(function(d) { return d.Ast; })
+				.attr({
+					x: function(d, i) {return i * (w / stats.length) + (w / stats.length - barPad) / 2;},
+					y: function(d) {return h - d.Ast + 20;},
+					"text-anchor": "middle",
+					"font-family": "sans-serif",
+					fill: "white"
+				});
 								
   	</script>
   </body>
