@@ -1,7 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <title>Yahoo Fantasy Viz</title>
   	<script type="text/javascript" src="d3.min.js"></script>
+	<style type="text/css">
+		
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+		}
+		
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+		}
+		
+	</style>
   </head>
   <body>
   	<script type="text/javascript">
@@ -18,12 +34,16 @@
   			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FTP": 0.82, "Blk": 20.0, "TOs": 72.0, "FGP": 0.4, "Pts": 463.0}];
 		  
       var margin = {top: 50, right: 20, bottom: 20, left: 40}
-		  var w = 600 - margin.left - margin.right;
+	  var w = 600 - margin.left - margin.right;
       var h = 300 - margin.top - margin.bottom;
       var barPad = 3;
 
       //var stat_cat = "Ast";
-
+	  
+	  var xScale = d3.scale.ordinal()
+		.domain(d3.range(stats.length))
+		.rangeRoundBands([0, w], 0.05);
+	  
       var yScale = d3.scale.linear()
         .domain([0, d3.max(stats, function(d) { return d.Stl; })])
         .range([0, h]);
@@ -45,10 +65,10 @@
   			.enter()
   			.append("rect")
 				.attr({
-					x: function(d, i) { return i * (w / stats.length); },
+					x: function(d, i) { return xScale(i); },
 					y: function(d) { return h - yScale(d.Stl); },
 					height: function(d) { return yScale(d.Stl); },
-					width: w / stats.length - barPad
+					width: xScale.rangeBand()
 				});
 			
       // labels						
@@ -58,7 +78,7 @@
 				.append("text")
 				.text(function(d) { return d.Stl; })
 				.attr({
-					x: function(d, i) {return i * (w / stats.length) + (w / stats.length - barPad) / 2;},
+					x: function(d, i) {return xScale(i) + xScale.rangeBand() / 2;},
 					y: function(d) {return h - yScale(d.Stl) + 20;},
 					"text-anchor": "middle",
 					"font-family": "sans-serif",
@@ -67,7 +87,9 @@
 
         // yAxis
         svgContainer.append("g")
-          .call(yAxis)
+			.attr("class", "axis")
+			.call(yAxis)
+			.ticks(4);
 								
   	</script>
   </body>
