@@ -2,9 +2,9 @@ from bs4 import BeautifulSoup
 import json
 
 category_lookup = {'9004003': 'FGs',
-	'5': 'FG%',
+	'5': 'FGP',
 	'9007006': 'FTs',
-	'8': 'FT%',
+	'8': 'FTP',
 	'10': '3pt',
 	'12': 'Pts',
 	'15': 'Rbs',
