@@ -5,56 +5,69 @@
   </head>
   <body>
   	<script type="text/javascript">
-  		
-  		var w = 600;
-  		var h = 300;
-  		var barPad = 2;
 
   		// Team stats data set
   		var stats = [
-  			{"FTs": "110/132", "name": "Great Scott!", "Ast": 117.0, "Stl": 39.0, "Rbs": 212.0, "3pt": 33.0, "FGs": "187/399", "FT%": 0.833, "Blk": 21.0, "TOs": 78.0, "FG%": 0.469, "Pts": 517.0},
-  			{"FTs": "87/118", "name": "From Last to First", "Ast": 107.0, "Stl": 30.0, "Rbs": 215.0, "3pt": 31.0, "FGs": "177/419", "FT%": 0.737, "Blk": 30.0, "TOs": 88.0, "FG%": 0.422, "Pts": 472.0},
-  			{"FTs": "119/151", "name": "Large McBigHuge", "Ast": 117.0, "Stl": 46.0, "Rbs": 176.0, "3pt": 22.0, "FGs": "178/393", "FT%": 0.788, "Blk": 18.0, "TOs": 88.0, "FG%": 0.453, "Pts": 497.0},
-  			{"FTs": "115/164", "name": "K-Mac", "Ast": 156.0, "Stl": 30.0, "Rbs": 192.0, "3pt": 36.0, "FGs": "185/384", "FT%": 0.701, "Blk": 32.0, "TOs": 82.0, "FG%": 0.482, "Pts": 521.0},
-  			{"FTs": "136/201", "name": "ZNS", "Ast": 152.0, "Stl": 74.0, "Rbs": 300.0, "3pt": 36.0, "FGs": "237/529", "FT%": 0.677, "Blk": 31.0, "TOs": 102.0, "FG%": 0.448, "Pts": 646.0},
-  			{"FTs": "121/155", "name": "Paul's Team", "Ast": 79.0, "Stl": 38.0, "Rbs": 207.0, "3pt": 22.0, "FGs": "210/446", "FT%": 0.781, "Blk": 27.0, "TOs": 81.0, "FG%": 0.471, "Pts": 563.0},
-  			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FT%": 0.79, "Blk": 18.0, "TOs": 95.0, "FG%": 0.46, "Pts": 490.0},
-  			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FT%": 0.82, "Blk": 20.0, "TOs": 72.0, "FG%": 0.4, "Pts": 463.0}];
-		
-		  //var stat_cat = "Ast";
+  			{"FTs": "110/132", "name": "Great Scott!", "Ast": 117.0, "Stl": 39.0, "Rbs": 212.0, "3pt": 33.0, "FGs": "187/399", "FTP": 0.833, "Blk": 21.0, "TOs": 78.0, "FGP": 0.469, "Pts": 517.0},
+  			{"FTs": "87/118", "name": "From Last to First", "Ast": 107.0, "Stl": 30.0, "Rbs": 215.0, "3pt": 31.0, "FGs": "177/419", "FTP": 0.737, "Blk": 30.0, "TOs": 88.0, "FGP": 0.422, "Pts": 472.0},
+  			{"FTs": "119/151", "name": "Large McBigHuge", "Ast": 117.0, "Stl": 46.0, "Rbs": 176.0, "3pt": 22.0, "FGs": "178/393", "FTP": 0.788, "Blk": 18.0, "TOs": 88.0, "FGP": 0.453, "Pts": 497.0},
+  			{"FTs": "115/164", "name": "K-Mac", "Ast": 156.0, "Stl": 30.0, "Rbs": 192.0, "3pt": 36.0, "FGs": "185/384", "FTP": 0.701, "Blk": 32.0, "TOs": 82.0, "FGP": 0.482, "Pts": 521.0},
+  			{"FTs": "136/201", "name": "ZNS", "Ast": 152.0, "Stl": 74.0, "Rbs": 300.0, "3pt": 36.0, "FGs": "237/529", "FTP": 0.677, "Blk": 31.0, "TOs": 102.0, "FGP": 0.448, "Pts": 646.0},
+  			{"FTs": "121/155", "name": "Paul's Team", "Ast": 79.0, "Stl": 38.0, "Rbs": 207.0, "3pt": 22.0, "FGs": "210/446", "FTP": 0.781, "Blk": 27.0, "TOs": 81.0, "FGP": 0.471, "Pts": 563.0},
+  			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FTP": 0.79, "Blk": 18.0, "TOs": 95.0, "FGP": 0.46, "Pts": 490.0},
+  			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FTP": 0.82, "Blk": 20.0, "TOs": 72.0, "FGP": 0.4, "Pts": 463.0}];
+		  
+      var margin = {top: 50, right: 20, bottom: 20, left: 40}
+		  var w = 600 - margin.left - margin.right;
+      var h = 300 - margin.top - margin.bottom;
+      var barPad = 3;
+
+      //var stat_cat = "Ast";
 
       var yScale = d3.scale.linear()
-        .domain([0, d3.max(stats, function(d) { return d.Ast; })])
+        .domain([0, d3.max(stats, function(d) { return d.Stl; })])
         .range([0, h]);
 
-  		var svgContainer = d3.select("body").append("svg")
-  			.attr("width", w)
-  			.attr("height", h)
-  			.style("border","1px solid black");
+      var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient("left")
 
-  		var bars = svgContainer.selectAll("rect")
+  		var svgContainer = d3.select("body").append("svg")
+  			.attr("width", w + margin.left + margin.right)
+  			.attr("height", h + margin.top + margin.bottom)
+  			.style("border","1px solid black")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  		// bars
+      svgContainer.selectAll("rect")
   			.data(stats)
   			.enter()
   			.append("rect")
 				.attr({
 					x: function(d, i) { return i * (w / stats.length); },
-					y: function(d) { return h - d.Ast; },
-					height: function(d) { return d.Ast; },
+					y: function(d) { return h - yScale(d.Stl); },
+					height: function(d) { return yScale(d.Stl); },
 					width: w / stats.length - barPad
 				});
-									
-		  var labels = svgContainer.selectAll("text")
+			
+      // labels						
+		  svgContainer.selectAll("text")
 				.data(stats)
 				.enter()
 				.append("text")
-				.text(function(d) { return d.Ast; })
+				.text(function(d) { return d.Stl; })
 				.attr({
 					x: function(d, i) {return i * (w / stats.length) + (w / stats.length - barPad) / 2;},
-					y: function(d) {return h - d.Ast + 20;},
+					y: function(d) {return h - yScale(d.Stl) + 20;},
 					"text-anchor": "middle",
 					"font-family": "sans-serif",
 					fill: "white"
 				});
+
+        // yAxis
+        svgContainer.append("g")
+          .call(yAxis)
 								
   	</script>
   </body>
