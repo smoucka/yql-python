@@ -9,6 +9,8 @@
   
   </head>
   <body>
+    <div id="selector"></div>
+    <div id="graph"></div>
   	<script type="text/javascript">
 
   		// Team stats data set
@@ -22,12 +24,13 @@
   			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FTP": 0.79, "Blk": 18.0, "TOs": 95.0, "FGP": 0.46, "Pts": 490.0},
   			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FTP": 0.82, "Blk": 20.0, "TOs": 72.0, "FGP": 0.4, "Pts": 463.0}];
 
-      var margin = {top: 50, right: 20, bottom: 40, left: 40},
-          width = 600 - margin.left - margin.right,
-          height = 300 - margin.top - margin.bottom,
+      var margin = {top: 50, right: 20, bottom: 40, left: 250},
+          width = 800 - margin.left - margin.right,
+          height = 600 - margin.top - margin.bottom,
           barPad = 3;
 
       // Create category list and dropdown menu
+      // In future, use league resource and settings
       var categories = [["FGP", "Field Goal %"],
                         ["FTP", "Free Throw %"],
                         ["3pt", "Three Point FGs"],
@@ -38,7 +41,7 @@
                         ["Blk", "Blocks"],
                         ["TOs", "Turnovers"]];
 
-      d3.select("body").append("select")
+      d3.select("#selector").append("select")
         .attr("id", "selectCat")
         .selectAll("option")
         .data(categories)
@@ -48,31 +51,19 @@
         .text( function(d) {return d[1]; });
       
       var statCat = $("#selectCat").val();
+      console.log(statCat)
 
       // Create x- and y-scale
-      var xScale = d3.scale.ordinal()
-        .domain(d3.range(stats.length))
-        .rangeRoundBands([0, width], 0.05);
-	  
-      var yScale = d3.scale.linear()
+      var xScale = d3.scale.linear()
         .domain([0, d3.max(stats, function(d) { return d[statCat]; })])
-        .range([0, height]);
+        .range([0, width]);
 
-      var colorScale = d3.scale.category10();
-
-      //var colorBrewerScale = d3.scale.ordinal()
-        //.domain(for (i=0; i < stats.length; i++) {
-
-        //});
-
-      // Remove axis?
-      var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .orient("left")
-        .ticks(4);
+      var yScale = d3.scale.ordinal()
+        .domain(d3.range(stats.length))
+        .rangeRoundBands([0, height], 0.05);
 
       // Create SVG space
-  		var svgContainer = d3.select("body").append("svg")
+  		var svgContainer = d3.select("#graph").append("svg")
   			.attr("width", width + margin.left + margin.right)
   			.attr("height", height + margin.top + margin.bottom)
   			.style("border","1px solid black")
@@ -80,23 +71,26 @@
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   		// create bars function then call to draw with 0ms transition
-      function rect(durationInt) {
-        svgContainer.selectAll("rect")
+      var bars = svgContainer.selectAll("g.team")
           .data(stats)
           .enter()
-          .append("rect")
+          .append("g")
+          .attr("class", "team")
+          .attr("transform", function(d, i) {
+            return "translate(0," + yScale(i) + ")";
+          });
+
+      function drawBars(durationInt) {
+        bars.append("rect")
           .transition()
           .duration(durationInt)
-				  .attr({
-            x: function(d, i) { return xScale(i); },
-            y: function(d) { return height - yScale(d[statCat]); },
-            height: function(d) { return yScale(d[statCat]); },
-            width: xScale.rangeBand(),
-            //fill: function(d, i) { return colorScale(i); }
-				  });
+          .attr({
+            width: function(d) { return xScale(d[statCat]); },
+            height: yScale.rangeBand()
+          })
       };
 
-      rect(0);
+      drawBars(0);
 
       // team names
       svgContainer.append("g")
@@ -112,7 +106,7 @@
           "font-family": "sans-serif",
           "font-size": "8px"
         })
-			
+			/*
       // labels						
 		  svgContainer.append("g")
         .attr("class", "statLabels")
@@ -128,26 +122,17 @@
 					"font-family": "sans-serif",
 					fill: "white"
 				});
-
+*/
       d3.select("select")
         .on("change", function() {
             statCat = $("#selectCat").val();
 
-            yScale.domain([0, d3.max(stats, function(d) { return d[statCat]; })]);
+            xScale.domain([0, d3.max(stats, function(d) { return d[statCat]; })]);
 
-            svgContainer.selectAll("rect")
-              .transition()
-              .duration(500)
-              .attr({
-                x: function(d, i) { return xScale(i); },
-                y: function(d) { return height - yScale(d[statCat]); },
-                height: function(d) { return yScale(d[statCat]); },
-                width: xScale.rangeBand()
-              });
-
+            drawBars(500);
+            
             svgContainer.select(".statLabels")
             .selectAll("text")
-            .data(stats)
             .text(function(d) { return d[statCat]; })
             .transition()
             .duration(500)
