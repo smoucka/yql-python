@@ -24,10 +24,11 @@
   			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FTP": 0.79, "Blk": 18.0, "TOs": 95.0, "FGP": 0.46, "Pts": 490.0},
   			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FTP": 0.82, "Blk": 20.0, "TOs": 72.0, "FGP": 0.4, "Pts": 463.0}];
 
-      var margin = {top: 50, right: 20, bottom: 40, left: 250},
+      var margin = {top: 50, right: 20, bottom: 40, left: 20},
           width = 800 - margin.left - margin.right,
           height = 600 - margin.top - margin.bottom,
-          barPad = 3;
+          barPad = 3,
+          leftPad = 230;
 
       // Create category list and dropdown menu
       // In future, use league resource and settings
@@ -56,7 +57,7 @@
       // Create x- and y-scale
       var xScale = d3.scale.linear()
         .domain([0, d3.max(stats, function(d) { return d[statCat]; })])
-        .range([0, width]);
+        .range([0, width - leftPad]);
 
       var yScale = d3.scale.ordinal()
         .domain(d3.range(stats.length))
@@ -75,10 +76,24 @@
           .data(stats)
           .enter()
           .append("g")
-          .attr("class", "team")
+          .attr("class", "teamBar")
+          .attr({
+            width: width,
+            height: yScale.rangeBand
+          })
           .attr("transform", function(d, i) {
             return "translate(0," + yScale(i) + ")";
           });
+/*
+      bars.selectAll(".teamBar")
+        .select("rect")
+        .data(stats)
+        .enter()
+        .append("rect")
+        .attr({
+          x: leftPad
+        })
+*/
 
       function drawBars(durationInt) {
         bars.append("rect")
@@ -88,10 +103,12 @@
             width: function(d) { return xScale(d[statCat]); },
             height: yScale.rangeBand()
           })
+          .attr("transform", "translate(" + leftPad + ",0)")
       };
 
       drawBars(0);
 
+/*
       // team names
       svgContainer.append("g")
         .attr("id", "teamLabels")
@@ -106,7 +123,7 @@
           "font-family": "sans-serif",
           "font-size": "8px"
         })
-			/*
+			
       // labels						
 		  svgContainer.append("g")
         .attr("class", "statLabels")
