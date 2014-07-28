@@ -2,9 +2,13 @@
 <html>
   <head>
     <title>Yahoo Fantasy Viz</title>
-  	
+
+    <script type="text/javascript" src="d3.min.js"></script>
+    <script type="text/javascript" src="jquery-2.1.0.min.js"></script>
+    <!--
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+    -->
     <style>
       p {
         font-size: 14px;
@@ -13,7 +17,7 @@
 
       #selector {
         width: 120px;
-        hiehgt: 25px;
+        height: 20px;
         background: black;
       }
 
@@ -23,6 +27,26 @@
         background: black;
         border: 0px;
         -webkit-appearance: none;
+      }
+
+      .axis {
+        font: 10px sans-serif;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      .axis .domain {
+        fill: none;
+        stroke: black;
+        stroke-width: 2px;
+      }
+
+      .slider .handle {
+        fill: black;
+        stroke: #000;
+        stroke-width: 1.25px;
+        pointer-events: none;
       }
 
       .statLabels {
@@ -55,12 +79,18 @@
   			{"FTs": "121/155", "name": "Paul's Team", "Ast": 79.0, "Stl": 38.0, "Rbs": 207.0, "3pt": 22.0, "FGs": "210/446", "FTP": 0.781, "Blk": 27.0, "TOs": 81.0, "FGP": 0.471, "Pts": 563.0},
   			{"FTs": "94/119", "name": "Carter", "Ast": 116.0, "Stl": 28.0, "Rbs": 202.0, "3pt": 40.0, "FGs": "178/387", "FTP": 0.79, "Blk": 18.0, "TOs": 95.0, "FGP": 0.46, "Pts": 490.0},
   			{"FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Stl": 29.0, "Rbs": 181.0, "3pt": 32.0, "FGs": "163/407", "FTP": 0.82, "Blk": 20.0, "TOs": 72.0, "FGP": 0.4, "Pts": 463.0}];
-
-      var margin = {top: 50, right: 20, bottom: 50, left: 20},
+      /*
+      var stats = [
+        {"week": 1, "data": [{"FTP": 0.833, "FTs": "110/132", "name": "Great Scott!", "Ast": 117.0, "Rbs": 212.0, "FGP": 0.469, "3pt": 33.0, "FGs": "187/399", "Stl": 39.0, "Blk": 21.0, "TOs": 78.0, "Pts": 517.0}, {"FTP": 0.737, "FTs": "87/118", "name": "From Last to First", "Ast": 107.0, "Rbs": 215.0, "FGP": 0.422, "3pt": 31.0, "FGs": "177/419", "Stl": 30.0, "Blk": 30.0, "TOs": 88.0, "Pts": 472.0}, {"FTP": 0.788, "FTs": "119/151", "name": "Large McBigHuge", "Ast": 117.0, "Rbs": 176.0, "FGP": 0.453, "3pt": 22.0, "FGs": "178/393", "Stl": 46.0, "Blk": 18.0, "TOs": 88.0, "Pts": 497.0}, {"FTP": 0.701, "FTs": "115/164", "name": "K-Mac", "Ast": 156.0, "Rbs": 192.0, "FGP": 0.482, "3pt": 36.0, "FGs": "185/384", "Stl": 30.0, "Blk": 32.0, "TOs": 82.0, "Pts": 521.0}, {"FTP": 0.677, "FTs": "136/201", "name": "ZNS", "Ast": 152.0, "Rbs": 300.0, "FGP": 0.448, "3pt": 36.0, "FGs": "237/529", "Stl": 74.0, "Blk": 31.0, "TOs": 102.0, "Pts": 646.0}, {"FTP": 0.781, "FTs": "121/155", "name": "Paul's Team", "Ast": 79.0, "Rbs": 207.0, "FGP": 0.471, "3pt": 22.0, "FGs": "210/446", "Stl": 38.0, "Blk": 27.0, "TOs": 81.0, "Pts": 563.0}, {"FTP": 0.79, "FTs": "94/119", "name": "Carter", "Ast": 116.0, "Rbs": 202.0, "FGP": 0.46, "3pt": 40.0, "FGs": "178/387", "Stl": 28.0, "Blk": 18.0, "TOs": 95.0, "Pts": 490.0}, {"FTP": 0.82, "FTs": "105/128", "name": "Starvis Flocka Flame", "Ast": 113.0, "Rbs": 181.0, "FGP": 0.4, "3pt": 32.0, "FGs": "163/407", "Stl": 29.0, "Blk": 20.0, "TOs": 72.0, "Pts": 463.0}]},
+        {"week": 2, "data": [{"FTP": 0.814, "FTs": "96/118", "name": "Great Scott!", "Ast": 136.0, "Rbs": 227.0, "FGP": 0.515, "3pt": 35.0, "FGs": "258/501", "Stl": 42.0, "Blk": 20.0, "TOs": 83.0, "Pts": 647.0}, {"FTP": 0.802, "FTs": "130/162", "name": "Large McBigHuge", "Ast": 174.0, "Rbs": 238.0, "FGP": 0.443, "3pt": 36.0, "FGs": "237/535", "Stl": 48.0, "Blk": 36.0, "TOs": 108.0, "Pts": 640.0}, {"FTP": 0.836, "FTs": "102/122", "name": "From Last to First", "Ast": 117.0, "Rbs": 178.0, "FGP": 0.47, "3pt": 30.0, "FGs": "202/430", "Stl": 44.0, "Blk": 13.0, "TOs": 72.0, "Pts": 536.0}, {"FTP": 0.864, "FTs": "121/140", "name": "Starvis Flocka Flame", "Ast": 141.0, "Rbs": 275.0, "FGP": 0.465, "3pt": 61.0, "FGs": "249/535", "Stl": 37.0, "Blk": 20.0, "TOs": 103.0, "Pts": 680.0}, {"FTP": 0.692, "FTs": "137/198", "name": "ZNS", "Ast": 187.0, "Rbs": 289.0, "FGP": 0.471, "3pt": 32.0, "FGs": "276/586", "Stl": 63.0, "Blk": 30.0, "TOs": 114.0, "Pts": 721.0}, {"FTP": 0.696, "FTs": "117/168", "name": "K-Mac", "Ast": 160.0, "Rbs": 255.0, "FGP": 0.482, "3pt": 40.0, "FGs": "235/488", "Stl": 59.0, "Blk": 33.0, "TOs": 87.0, "Pts": 627.0}, {"FTP": 0.852, "FTs": "104/122", "name": "Carter", "Ast": 126.0, "Rbs": 215.0, "FGP": 0.462, "3pt": 48.0, "FGs": "207/448", "Stl": 46.0, "Blk": 27.0, "TOs": 82.0, "Pts": 566.0}, {"FTP": 0.758, "FTs": "144/190", "name": "Paul's Team", "Ast": 106.0, "Rbs": 244.0, "FGP": 0.44, "3pt": 33.0, "FGs": "217/493", "Stl": 48.0, "Blk": 44.0, "TOs": 77.0, "Pts": 611.0}]},
+        {"week": 3, "data": [{"FTP": 0.765, "FTs": "114/149", "name": "Great Scott!", "Ast": 168.0, "Rbs": 227.0, "FGP": 0.46, "3pt": 43.0, "FGs": "223/485", "Stl": 45.0, "Blk": 22.0, "TOs": 95.0, "Pts": 603.0}, {"FTP": 0.708, "FTs": "138/195", "name": "ZNS", "Ast": 148.0, "Rbs": 323.0, "FGP": 0.478, "3pt": 29.0, "FGs": "248/519", "Stl": 55.0, "Blk": 51.0, "TOs": 94.0, "Pts": 663.0}, {"FTP": 0.806, "FTs": "116/144", "name": "From Last to First", "Ast": 107.0, "Rbs": 173.0, "FGP": 0.442, "3pt": 40.0, "FGs": "200/452", "Stl": 49.0, "Blk": 21.0, "TOs": 70.0, "Pts": 556.0}, {"FTP": 0.79, "FTs": "166/210", "name": "Large McBigHuge", "Ast": 150.0, "Rbs": 251.0, "FGP": 0.444, "3pt": 28.0, "FGs": "239/538", "Stl": 44.0, "Blk": 26.0, "TOs": 97.0, "Pts": 672.0}, {"FTP": 0.808, "FTs": "118/146", "name": "Carter", "Ast": 136.0, "Rbs": 226.0, "FGP": 0.453, "3pt": 62.0, "FGs": "242/534", "Stl": 48.0, "Blk": 21.0, "TOs": 82.0, "Pts": 664.0}, {"FTP": 0.781, "FTs": "114/146", "name": "K-Mac", "Ast": 151.0, "Rbs": 232.0, "FGP": 0.498, "3pt": 30.0, "FGs": "206/414", "Stl": 36.0, "Blk": 31.0, "TOs": 83.0, "Pts": 556.0}, {"FTP": 0.778, "FTs": "126/162", "name": "Paul's Team", "Ast": 151.0, "Rbs": 278.0, "FGP": 0.493, "3pt": 39.0, "FGs": "280/568", "Stl": 48.0, "Blk": 34.0, "TOs": 91.0, "Pts": 725.0}, {"FTP": 0.861, "FTs": "87/101", "name": "Starvis Flocka Flame", "Ast": 111.0, "Rbs": 183.0, "FGP": 0.444, "3pt": 47.0, "FGs": "227/511", "Stl": 26.0, "Blk": 26.0, "TOs": 85.0, "Pts": 588.0}]},
+        {"week": 4, "data": [{"FTP": 0.743, "FTs": "104/140", "name": "Great Scott!", "Ast": 132.0, "Rbs": 203.0, "FGP": 0.495, "3pt": 51.0, "FGs": "229/463", "Stl": 37.0, "Blk": 14.0, "TOs": 62.0, "Pts": 613.0}, {"FTP": 0.833, "FTs": "90/108", "name": "Carter", "Ast": 109.0, "Rbs": 240.0, "FGP": 0.471, "3pt": 53.0, "FGs": "203/431", "Stl": 31.0, "Blk": 22.0, "TOs": 82.0, "Pts": 549.0}, {"FTP": 0.804, "FTs": "78/97", "name": "From Last to First", "Ast": 84.0, "Rbs": 171.0, "FGP": 0.419, "3pt": 21.0, "FGs": "164/391", "Stl": 32.0, "Blk": 22.0, "TOs": 60.0, "Pts": 427.0}, {"FTP": 0.692, "FTs": "157/227", "name": "ZNS", "Ast": 193.0, "Rbs": 338.0, "FGP": 0.468, "3pt": 44.0, "FGs": "252/539", "Stl": 54.0, "Blk": 33.0, "TOs": 106.0, "Pts": 705.0}, {"FTP": 0.753, "FTs": "125/166", "name": "Large McBigHuge", "Ast": 155.0, "Rbs": 248.0, "FGP": 0.445, "3pt": 28.0, "FGs": "239/537", "Stl": 42.0, "Blk": 29.0, "TOs": 114.0, "Pts": 631.0}, {"FTP": 0.801, "FTs": "113/141", "name": "Starvis Flocka Flame", "Ast": 97.0, "Rbs": 172.0, "FGP": 0.444, "3pt": 35.0, "FGs": "195/439", "Stl": 37.0, "Blk": 17.0, "TOs": 58.0, "Pts": 538.0}, {"FTP": 0.753, "FTs": "195/259", "name": "Paul's Team", "Ast": 157.0, "Rbs": 264.0, "FGP": 0.445, "3pt": 35.0, "FGs": "257/578", "Stl": 47.0, "Blk": 41.0, "TOs": 104.0, "Pts": 744.0}, {"FTP": 0.768, "FTs": "129/168", "name": "K-Mac", "Ast": 150.0, "Rbs": 235.0, "FGP": 0.47, "3pt": 35.0, "FGs": "216/460", "Stl": 51.0, "Blk": 31.0, "TOs": 92.0, "Pts": 596.0}]}]
+*/
+      var margin = {top: 100, right: 20, bottom: 50, left: 20},
           width = 800 - margin.left - margin.right,
           height = 600 - margin.top - margin.bottom,
           barPad = 3,
-          leftPad = 230;
+          leftPad = 200;
 
       // Create category list and dropdown menu
       // In future, use league resource and settings
@@ -85,7 +115,7 @@
       
       var statCat = $("#selectCat").val();
 
-      // Create x- and y-scale
+      // Create x-, y- and slide-scale
       var xScale = d3.scale.linear()
         .domain([0, d3.max(stats, function(d) { return d[statCat]; })])
         .range([0, width - leftPad]);
@@ -94,12 +124,70 @@
         .domain(d3.range(stats.length))
         .rangeRoundBands([0, height], 0.05);
 
+      var slideScale = d3.scale.linear()
+        .domain([1, stats.length])
+        .range([0, width])
+        .clamp(true);
+
+      // Create week selector brush
+      var brush = d3.svg.brush()
+        .x(slideScale)
+        .extent([1,1])
+        .on("brush", brushed);
+
+      // Select week of data shown based on slider
+      function weekSelect() { d3.select("p").text(brush.extent()[0]); }
+      weekSelect();
+
       // Create SVG space
   		var svgContainer = d3.select("#graph").append("svg")
   			.attr("width", width + margin.left + margin.right)
   			.attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      // Create slider
+      svgContainer.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (-margin.top / 2) + ")")
+        .call(d3.svg.axis()
+          .scale(slideScale)
+          .orient("bottom")
+          .ticks(stats.length)
+          .tickFormat(function(d) { return "Week " + d; })
+          .tickSize(10)
+          .tickPadding(20));
+
+      var slider = svgContainer.append("g")
+        .attr("class", "slider")
+        .attr("transform", "translate(0," + (-margin.top / 2) + ")")
+        .call(brush);
+
+      slider.selectAll(".extent,.resize")
+        .remove();
+
+      slider.select(".background")
+        .attr("height", margin.top / 2)
+        .attr("transform", "translate(0," + (-margin.top / 4) + ")");
+
+      var handle = slider.append("rect")
+        .attr("class", "handle")
+        .attr("transform", "translate(-5," + (-margin.top / 4) + ")")
+        .attr("height", margin.top / 2)
+        .attr("width", 10);
+
+      function brushed() {
+        var value = brush.extent()[0];
+        //console.log(brush.extent()[0]);
+        if (d3.event.sourceEvent) { // not a programmatic event
+          value = d3.round(slideScale.invert(d3.mouse(this)[0]));
+          brush.extent([value, value]);
+        }
+
+        handle.attr("x", slideScale(value));
+        weekSelect();
+
+        }
 
       // bars is global
       function attachData() {
